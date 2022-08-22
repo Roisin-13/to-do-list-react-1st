@@ -31,3 +31,9 @@ code {
   font-size: calc(10px + 2vmin);
   /* color: white; */
 }
+#listPlace {
+  width: 50px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid deeppink;
+}

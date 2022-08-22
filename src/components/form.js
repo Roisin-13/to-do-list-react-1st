@@ -12,21 +12,34 @@ const [taskList, setTaskLists] = useState([]);
     //     setTasks(e.target.value);
     //     //e.preventDefault();
     // }
+
+    const handleListItem = (e) => {
+        e.preventDefault();
+        setTasks(e.target.value);
+        document.getElementById("input").value = "";
+        //e.preventDefault();
+    }
+
+
 const handleList = (e) => {
     e.preventDefault();
-    setTaskLists(taskList => [...taskList, tasks]);
-    let list = tasks;
-    console.log(list);
-    console.log(taskList.toString());
-    //document.getElementById("input").value="";
+    setTaskLists([...taskList, tasks]);
+    console.log(tasks);
+    console.log(taskList);
+    document.getElementById("input").value="";
+    let LP = document.getElementById("listPlace");
+    // LP.innerHTML = taskList;
+        LP.innerHTML = taskList.map(i => `<li>${i}</li>`).join('');
+
 }
 
-
+    // onChange = {(e) => setTasks(e.target.value)} 
  return (
      <>
-     <form>
-             <input type="text" placeholder="task" onChange={(e) => setTasks(e.target.value)} value={tasks} id="input"></input>
-             <button type="submit" onClick={handleList}>ADD</button>
+         <form onSubmit={handleList}>
+             <input type="text" placeholder="add task" onChange={handleListItem} value={tasks} id="input"></input>
+             {/* <button type="submit" onClick={handleList}>ADD</button> */}
+             <ul id="listPlace"></ul>
      </form>
      </>
  );
