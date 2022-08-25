@@ -1,47 +1,88 @@
-import { useState } from "react";
-const ListItem = () => {
-const [tasks, setTasks] = useState("");
-const [taskList, setTaskLists] = useState([]);
+import { useEffect, useState } from "react";
+const List = () => {
+  const [taskList, setTaskLists] = useState([]);
 
-// DO I NEED?
-    // const handleListItem = (e) => {
-    //     e.preventDefault();
-    //     console.log(e.type);
-    //     let list = e.target.value;
-    //     console.log(list);
-    //     setTasks(e.target.value);
-    //     //e.preventDefault();
-    // }
-
-    const handleListItem = (e) => {
-        e.preventDefault();
-        setTasks(e.target.value);
-        document.getElementById("input").value = "";
-        //e.preventDefault();
-    }
-
-
-const handleList = (e) => {
-    e.preventDefault();
-    setTaskLists([...taskList, tasks]);
-    console.log(tasks);
+  //this just outputs the current task list everytime the component rerenders
+  useEffect(() => {
     console.log(taskList);
-    document.getElementById("input").value="";
-    let LP = document.getElementById("listPlace");
-    // LP.innerHTML = taskList;
-        LP.innerHTML = taskList.map(i => `<li>${i}</li>`).join('');
+  }, [taskList]);
 
-}
+  //this is a function which will update tasks done property
+  const updateDoneTasks = (id) => {
+    //creates a new list based off the one in state
+    const newTaskList = [...taskList];
+    //finds the item in the list which matches the id paraemter
+    const taskIndex = newTaskList.findIndex((task) => task.id === id);
+    //flips the done value
+    newTaskList[taskIndex].done = !newTaskList[taskIndex].done;
+    //sets the state to the new taskList
+    setTaskLists(newTaskList);
+  };
 
-    // onChange = {(e) => setTasks(e.target.value)} 
- return (
-     <>
-         <form onSubmit={handleList}>
-             <input type="text" placeholder="add task" onChange={handleListItem} value={tasks} id="input"></input>
-             {/* <button type="submit" onClick={handleList}>ADD</button> */}
-             <ul id="listPlace"></ul>
-     </form>
-     </>
- );
-}
-export default ListItem;
+  //this is a function to handle form submit
+  const handleList = (e) => {
+    e.preventDefault();
+    //create a new task object, using randomly generated id and a value of the input in the dom
+    const newTask = {
+      id: Math.random().toString(16).slice(2),
+      taskName: document.getElementById("input").value,
+      done: false,
+    };
+
+    //sets the state to the taskList to include the new task (uses callback function because we use the current state in oput set state function)
+    setTaskLists((taskList) => [...taskList, newTask]);
+    //sets the value of the input in the dom back to nothing
+    document.getElementById("input").value = "";
+  };
+
+  //uncontrolled input because its value is not derived from state
+  return (
+    <>
+      <form onSubmit={handleList}>
+        <input type="text" placeholder="add task" id="input"></input>
+        <ul id="listPlace">
+          {
+            //loops through tasks every render passing down state and "updateDoneTasks" callback function
+            taskList.map((item, index) => (
+              <ListItem
+                key={item.id}
+                item={item}
+                index={index}
+                updateDoneTasks={updateDoneTasks}
+              />
+            ))
+          }
+        </ul>
+      </form>
+    </>
+  );
+};
+
+const ListItem = (props) => {
+  const { item, index, updateDoneTasks } = props;
+
+  //this function gets call on every change of the checkbox
+  const handleOnChange = (e) => {
+    updateDoneTasks(item.id);
+  };
+
+  //controlled checkbox because "checked" is derived from state
+  return (
+    <li>
+      <div id="listItem">
+        <input
+          type="checkbox"
+          id={`${item.taskName}-input-${index}`}
+          name={item.taskName}
+          checked={item.done}
+          onChange={handleOnChange}
+        />
+        <label htmlFor={`${item.taskName}-input-${index}`}>
+          {item.taskName}
+        </label>
+      </div>
+    </li>
+  );
+};
+
+export default List;
