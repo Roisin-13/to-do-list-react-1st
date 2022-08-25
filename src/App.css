@@ -16,7 +16,6 @@ code {
   background-color: #fff;
   /* background-color: #282c34; */
   min-height: 100vh;
-  text-align: center;
 }
 
 .App-header {
@@ -35,5 +34,7 @@ code {
   width: 50px;
   display: flex;
   flex-direction: column;
-  border: 1px solid deeppink;
+}
+#listItem {
+  display: flex;
 }
